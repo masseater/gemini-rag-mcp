@@ -100,11 +100,11 @@ The codebase implements a **Template Method Pattern** for tool development:
 
 ### Current RAG Tools
 
-1. **ensure_store**: Find existing FileSearchStore by display name or create new one
-2. **list_stores**: List all available FileSearchStores with pagination
-3. **upload_file**: Upload file documents to knowledge base (auto-detects MIME type)
-4. **upload_content**: Upload text content directly to knowledge base (text/plain, UTF-8)
-5. **query_store**: Query knowledge base using RAG with Gemini models
+1. **upload_file**: Upload file documents to knowledge base (auto-detects MIME type)
+2. **upload_content**: Upload text content directly to knowledge base (text/plain, UTF-8)
+3. **query_store**: Query knowledge base using RAG with Gemini models
+
+Note: FileSearchStore is automatically created/ensured internally during upload and query operations.
 
 ### Key Files
 
@@ -113,7 +113,7 @@ The codebase implements a **Template Method Pattern** for tool development:
 - `src/server/tool-registry.ts`: Tool registration and management
 - `src/clients/gemini-client.ts`: Gemini API client for RAG operations
 - `src/tools/base/base-tool.ts`: Base class for all tools
-- `src/tools/implementations/`: RAG tool implementations (ensure-store, list-stores, upload-file, upload-content, query-store)
+- `src/tools/implementations/`: RAG tool implementations (upload-file, upload-content, query-store)
 - `src/types/index.ts`: Shared type definitions
 - `src/config/index.ts`: Configuration management with Gemini config validation
 - `src/utils/logger.ts`: Winston-based logging

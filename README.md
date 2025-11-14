@@ -94,8 +94,6 @@ pnpm run dev:http
 
 Once configured with Claude Desktop, the following tools are available:
 
-- **ensure_store**: Create or find a FileSearchStore by name
-- **list_stores**: List all available FileSearchStores
 - **upload_file**: Upload document files to the knowledge base
 - **upload_content**: Upload text content directly to the knowledge base
 - **query_store**: Query the knowledge base using RAG
