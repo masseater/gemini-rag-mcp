@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/gemini-rag-mcp",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "A production-ready template for building Model Context Protocol (MCP) servers with TypeScript",
   "main": "dist/index.js",
   "type": "module",
