@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Model Context Protocol (MCP) server template that provides RAG capabilities using Google's Gemini API File Search feature. The server supports both stdio and HTTP transports and is built with TypeScript in strict mode.
+This is a Model Context Protocol (MCP) server that provides RAG (Retrieval-Augmented Generation) capabilities using Google's Gemini API File Search feature. The server enables AI applications to create knowledge bases from uploaded documents and retrieve information using semantic search. Built with TypeScript in strict mode, supporting both stdio and HTTP transports.
 
 ## Development Commands
 
@@ -82,25 +82,39 @@ The codebase implements a **Template Method Pattern** for tool development:
    - Provides consistent error handling and response formatting
    - All tools must extend this class
    - Override `getInputSchema()` to define Zod validation schema
-   - Override `execute()` to implement tool logic
+   - Override `execute()` to implement tool logic (can be sync or async)
 
-2. **RawTool** (`src/tools/base/raw-tool.ts`): Extended base for tools supporting `raw` option
-   - For tools that need both minimal and full response modes
-   - Automatically handles `raw` parameter extraction
-
-3. **ToolRegistry** (`src/server/tool-registry.ts`): Central tool registration
+2. **ToolRegistry** (`src/server/tool-registry.ts`): Central tool registration
    - Manual registration for explicit control and safety
    - All tools must be added to the `Tool` type union
    - All tools must be added to the `tools` array in `initialize()`
+
+### Gemini Client Architecture
+
+**GeminiClient** (`src/clients/gemini-client.ts`): Core integration with Gemini API
+- Handles FileSearchStore CRUD operations
+- Manages document uploads with operation polling
+- Executes RAG queries with citation extraction
+- Provides store discovery by display name
+- Accessible via `ToolContext` in all tools
+
+### Current RAG Tools
+
+1. **ensure_store**: Find existing FileSearchStore by display name or create new one
+2. **list_stores**: List all available FileSearchStores with pagination
+3. **upload_file**: Upload documents to knowledge base (auto-detects MIME type)
+4. **query_store**: Query knowledge base using RAG with Gemini models
 
 ### Key Files
 
 - `src/index.ts`: Entry point with CLI handling and transport initialization
 - `src/server/mcp-server.ts`: Core MCP server implementation
 - `src/server/tool-registry.ts`: Tool registration and management
+- `src/clients/gemini-client.ts`: Gemini API client for RAG operations
 - `src/tools/base/base-tool.ts`: Base class for all tools
+- `src/tools/implementations/`: RAG tool implementations (ensure-store, list-stores, upload-file, query-store)
 - `src/types/index.ts`: Shared type definitions
-- `src/config/index.ts`: Configuration management
+- `src/config/index.ts`: Configuration management with Gemini config validation
 - `src/utils/logger.ts`: Winston-based logging
 
 ### Adding New Tools
@@ -109,6 +123,7 @@ The codebase implements a **Template Method Pattern** for tool development:
 ```typescript
 import { z } from "zod";
 import { BaseTool } from "../base/base-tool.js";
+import type { MCPToolResponse } from "../../types/index.js";
 
 type YourToolArgs = {
   param: string;
@@ -124,16 +139,24 @@ export class YourTool extends BaseTool<YourToolArgs> {
     });
   }
 
-  async execute(args: YourToolArgs): Promise<unknown> {
-    // Implementation
-    return result;
+  execute(args: YourToolArgs): MCPToolResponse<YourDataType> {
+    // Access Gemini client via context
+    const result = this.context.geminiClient.someMethod();
+
+    return {
+      success: true,
+      message: "Operation completed",
+      data: result,
+    };
   }
 }
 ```
 
 2. Register in `src/server/tool-registry.ts`:
-   - Add to `Tool` type union: `type Tool = EchoTool | PingTool | YourTool;`
+   - Add to `Tool` type union: `type Tool = EnsureStoreTool | ... | YourTool;`
    - Add to tools array: `new YourTool(context),`
+
+**Important**: Access `geminiClient` and `storeDisplayName` via `this.context` in tools.
 
 ### Transport Modes
 
@@ -185,6 +208,7 @@ All tools inherit automatic error handling from `BaseTool`:
 ## Dependencies
 
 Key dependencies:
+- `@google/genai`: Google Generative AI SDK for Gemini API
 - `@modelcontextprotocol/sdk`: MCP protocol implementation
 - `zod`: Runtime type validation and schema definition
 - `winston`: Logging
