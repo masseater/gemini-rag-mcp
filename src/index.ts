@@ -72,7 +72,7 @@ program
       // Initialize and start MCP server
       const mcpServer = new MCPServerImpl();
 
-      await mcpServer.initialize(config);
+      mcpServer.initialize(config);
       await mcpServer.start({
         type: transport,
         port: transport === "http" ? parseInt(options.port) : undefined,

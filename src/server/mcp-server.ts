@@ -8,6 +8,8 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import express from "express";
 import type { ServerConfig, TransportConfig } from "../types/index.js";
 import { ToolRegistry } from "./tool-registry.js";
+import { GeminiClient } from "../clients/gemini-client.js";
+import type { ToolContext } from "../tools/base-tool.js";
 
 /**
  * MCP server implementation
@@ -27,14 +29,23 @@ export class MCPServerImpl {
   /**
    * Initialize the MCP server with configuration
    */
-  async initialize(config: ServerConfig): Promise<void> {
+  initialize(config: ServerConfig): void {
     this.config = config;
+
+    // Create Gemini client
+    const geminiClient = new GeminiClient(config.gemini.apiKey);
+
+    // Create tool context
+    const toolContext: ToolContext = {
+      geminiClient,
+      storeDisplayName: config.gemini.storeDisplayName,
+    };
 
     // Setup tool registry and handlers
     this.toolRegistry = new ToolRegistry(this.server);
 
     // Initialize tool registry (loads tools automatically)
-    this.toolRegistry.initialize();
+    this.toolRegistry.initialize(toolContext);
 
     this.toolRegistry.setupToolHandlers();
   }

@@ -1,5 +1,6 @@
 import { zodToJsonSchema } from "zod-to-json-schema";
 import type { ZodSchema } from "zod";
+import type { GeminiClient } from "../clients/gemini-client.js";
 
 type ToolHandler<TArgs = Record<string, unknown>> = (
   args: TArgs
@@ -18,8 +19,8 @@ export type ToolDefinition<TArgs = Record<string, unknown>> = {
 }
 
 export type ToolContext = {
-  // Add your context properties here
-  // Example: apiClient: ApiClient;
+  geminiClient: GeminiClient;
+  storeDisplayName: string;
 }
 
 export type ToolResponse = {

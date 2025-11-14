@@ -1,0 +1,8 @@
+{
+    "mcpServers": {
+        "gemini-rag-mcp": {
+            "type": "http",
+            "url": "http://localhost:${PORT:-3000}/mcp"
+        }
+    }
+}

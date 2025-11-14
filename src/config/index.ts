@@ -9,7 +9,7 @@ import type { ServerConfig } from "../types/index.js";
  */
 const DEFAULT_CONFIG: ServerConfig = {
   server: {
-    name: "mcp-server",
+    name: "gemini-rag-mcp",
     version: "1.0.0",
   },
   mcp: {
@@ -19,6 +19,10 @@ const DEFAULT_CONFIG: ServerConfig = {
   logging: {
     level: process.env.LOG_LEVEL ?? "info",
     enableDebugConsole: process.env.DEBUG === "true",
+  },
+  gemini: {
+    apiKey: process.env.GOOGLE_API_KEY ?? "",
+    storeDisplayName: process.env.STORE_DISPLAY_NAME ?? "default",
   },
 };
 
@@ -40,6 +44,15 @@ export function validateConfig(config: ServerConfig): boolean {
     const validLogLevels = ["error", "warn", "info", "debug"];
     if (!validLogLevels.includes(config.logging.level)) {
       throw new Error(`Invalid log level: ${config.logging.level}`);
+    }
+
+    // Validate Gemini configuration
+    if (!config.gemini.apiKey) {
+      throw new Error("GOOGLE_API_KEY environment variable is required");
+    }
+
+    if (!config.gemini.storeDisplayName) {
+      throw new Error("STORE_DISPLAY_NAME environment variable is required");
     }
 
     return true;

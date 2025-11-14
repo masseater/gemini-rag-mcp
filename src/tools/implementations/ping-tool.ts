@@ -20,7 +20,7 @@ export class PingTool extends BaseTool<PingArgs> {
     return z.object({});
   }
 
-  async execute(_args: PingArgs): Promise<MCPToolResponse<{ status: string; timestamp: string }>> {
+  execute(_args: PingArgs): MCPToolResponse<{ status: string; timestamp: string }> {
     return {
       success: true,
       message: "Server is responding",

@@ -34,9 +34,9 @@ export abstract class BaseTool<TArgs = Record<string, unknown>> {
    * Execute the tool logic
    * Override this method to implement tool-specific behavior
    * @param args - Validated input arguments
-   * @returns Tool execution result
+   * @returns Tool execution result (can be sync or async)
    */
-  abstract execute(args: TArgs): Promise<unknown>;
+  abstract execute(args: TArgs): unknown;
 
   /**
    * Default handler that wraps execute() with response creation

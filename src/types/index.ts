@@ -16,6 +16,10 @@ export type ServerConfig = {
     level: string;
     enableDebugConsole: boolean;
   };
+  gemini: {
+    apiKey: string;
+    storeDisplayName: string;
+  };
 }
 
 // Transport types

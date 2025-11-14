@@ -1,0 +1,8 @@
+{
+    "enableAllProjectMcpServers": true,
+    "permissions": {
+        "allow": [
+            "mcp__gemini-rag-mcp"
+        ]
+    }
+}

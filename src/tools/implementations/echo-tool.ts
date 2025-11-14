@@ -24,7 +24,7 @@ export class EchoTool extends BaseTool<EchoArgs> {
     });
   }
 
-  async execute(args: EchoArgs): Promise<MCPToolResponse<{ message: string }>> {
+  execute(args: EchoArgs): MCPToolResponse<{ message: string }> {
     return {
       success: true,
       message: "Message echoed successfully",
