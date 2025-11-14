@@ -52,6 +52,9 @@
   "bugs": {
     "url": "https://github.com/masseater/gemini-rag-mcp/issues"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@google/genai": "1.29.1",
     "@modelcontextprotocol/sdk": "^1.20.1",
