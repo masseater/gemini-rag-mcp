@@ -6,6 +6,7 @@ import { GoogleGenAI } from "@google/genai";
 import { readFile } from "node:fs/promises";
 import { randomUUID } from "node:crypto";
 import { logger } from "../utils/logger.js";
+import type { CustomMetadata } from "../types/index.js";
 
 type FileSearchStore = {
   name: string;
@@ -170,16 +171,27 @@ export class GeminiClient {
     blob: Blob;
     mimeType: string;
     displayName: string;
+    metadata?: CustomMetadata[];
   }): Promise<UploadFileResult> {
     logger.info(`Uploading: ${args.displayName} (${args.mimeType})`);
+
+    const config: {
+      mimeType: string;
+      displayName: string;
+      customMetadata?: CustomMetadata[];
+    } = {
+      mimeType: args.mimeType,
+      displayName: args.displayName,
+    };
+
+    if (args.metadata) {
+      config.customMetadata = args.metadata;
+    }
 
     const op = await this.ai.fileSearchStores.uploadToFileSearchStore({
       fileSearchStoreName: args.storeName,
       file: args.blob,
-      config: {
-        mimeType: args.mimeType,
-        displayName: args.displayName,
-      },
+      config,
     });
 
     const finished = await this.waitForOperationDone(op, 5000);
@@ -201,6 +213,7 @@ export class GeminiClient {
     filePath: string;
     mimeType: string;
     displayName: string;
+    metadata?: CustomMetadata[];
   }): Promise<UploadFileResult> {
     // Read file and convert to Blob to handle multibyte characters in path
     const fileBuffer = await readFile(args.filePath);
@@ -208,12 +221,24 @@ export class GeminiClient {
       type: args.mimeType,
     });
 
-    return await this.uploadBlob({
+    const uploadArgs: {
+      storeName: string;
+      blob: Blob;
+      mimeType: string;
+      displayName: string;
+      metadata?: CustomMetadata[];
+    } = {
       storeName: args.storeName,
       blob,
       mimeType: args.mimeType,
       displayName: args.displayName,
-    });
+    };
+
+    if (args.metadata) {
+      uploadArgs.metadata = args.metadata;
+    }
+
+    return await this.uploadBlob(uploadArgs);
   }
 
   /**
@@ -223,17 +248,30 @@ export class GeminiClient {
     storeName: string;
     content: string;
     displayName: string;
+    metadata?: CustomMetadata[];
   }): Promise<UploadFileResult> {
     const encoder = new TextEncoder();
     const contentBytes = encoder.encode(args.content);
     const blob = new Blob([contentBytes], { type: "text/plain" });
 
-    return await this.uploadBlob({
+    const uploadArgs: {
+      storeName: string;
+      blob: Blob;
+      mimeType: string;
+      displayName: string;
+      metadata?: CustomMetadata[];
+    } = {
       storeName: args.storeName,
       blob,
       mimeType: "text/plain",
       displayName: args.displayName,
-    });
+    };
+
+    if (args.metadata) {
+      uploadArgs.metadata = args.metadata;
+    }
+
+    return await this.uploadBlob(uploadArgs);
   }
 
   /**

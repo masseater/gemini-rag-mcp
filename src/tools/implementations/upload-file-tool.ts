@@ -5,12 +5,18 @@
 import { z } from "zod";
 import { basename } from "node:path";
 import { BaseTool } from "../base/base-tool.js";
-import type { MCPToolResponse } from "../../types/index.js";
+import type {
+  MCPToolResponse,
+  CustomMetadata,
+  MetadataInput,
+} from "../../types/index.js";
+import { convertMetadataInput } from "../../utils/metadata.js";
 
 type UploadFileArgs = {
   filePath: string;
   mimeType?: string;
   displayName?: string;
+  metadata?: MetadataInput;
 };
 
 type UploadFileResult = {
@@ -44,6 +50,12 @@ export class UploadFileTool extends BaseTool<UploadFileArgs> {
         .describe(
           "Display name for the file in the store. Uses filename if not provided.",
         ),
+      metadata: z
+        .record(z.union([z.string(), z.number()]))
+        .optional()
+        .describe(
+          "Custom metadata as key-value pairs. Values can be strings or numbers. Maximum 20 entries per document. Example: {\"category\": \"guide\", \"year\": 2025}",
+        ),
     });
   }
 
@@ -64,12 +76,24 @@ export class UploadFileTool extends BaseTool<UploadFileArgs> {
     }
 
     // Upload file
-    const result = await geminiClient.uploadFile({
+    const uploadArgs: {
+      storeName: string;
+      filePath: string;
+      mimeType: string;
+      displayName: string;
+      metadata?: CustomMetadata[];
+    } = {
       storeName: store.name,
       filePath: args.filePath,
       mimeType,
       displayName,
-    });
+    };
+
+    if (args.metadata) {
+      uploadArgs.metadata = convertMetadataInput(args.metadata);
+    }
+
+    const result = await geminiClient.uploadFile(uploadArgs);
 
     return {
       success: true,

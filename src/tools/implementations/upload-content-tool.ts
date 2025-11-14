@@ -4,11 +4,17 @@
 
 import { z } from "zod";
 import { BaseTool } from "../base/base-tool.js";
-import type { MCPToolResponse } from "../../types/index.js";
+import type {
+  MCPToolResponse,
+  CustomMetadata,
+  MetadataInput,
+} from "../../types/index.js";
+import { convertMetadataInput } from "../../utils/metadata.js";
 
 type UploadContentArgs = {
   content: string;
   displayName: string;
+  metadata?: MetadataInput;
 };
 
 type UploadContentResult = {
@@ -33,6 +39,12 @@ export class UploadContentTool extends BaseTool<UploadContentArgs> {
         .string()
         .min(1)
         .describe("Display name for the content in the store"),
+      metadata: z
+        .record(z.union([z.string(), z.number()]))
+        .optional()
+        .describe(
+          "Custom metadata as key-value pairs. Values can be strings or numbers. Maximum 20 entries per document. Example: {\"category\": \"guide\", \"year\": 2025}",
+        ),
     });
   }
 
@@ -45,11 +57,22 @@ export class UploadContentTool extends BaseTool<UploadContentArgs> {
     const store = await geminiClient.ensureStore(storeDisplayName);
 
     // Upload content
-    const result = await geminiClient.uploadContent({
+    const uploadArgs: {
+      storeName: string;
+      content: string;
+      displayName: string;
+      metadata?: CustomMetadata[];
+    } = {
       storeName: store.name,
       content: args.content,
       displayName: args.displayName,
-    });
+    };
+
+    if (args.metadata) {
+      uploadArgs.metadata = convertMetadataInput(args.metadata);
+    }
+
+    const result = await geminiClient.uploadContent(uploadArgs);
 
     return {
       success: true,

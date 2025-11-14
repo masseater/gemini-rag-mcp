@@ -37,3 +37,13 @@ export type MCPToolResponse<T = unknown> = {
   message: string;
   data: T;
 }
+
+// Gemini API types
+export type CustomMetadata = {
+  key: string;
+  stringValue?: string;
+  numericValue?: number;
+}
+
+// Simple metadata format for tool input (user-friendly)
+export type MetadataInput = Record<string, string | number>;
