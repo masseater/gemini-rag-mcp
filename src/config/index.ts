@@ -23,6 +23,7 @@ const DEFAULT_CONFIG: ServerConfig = {
   gemini: {
     apiKey: process.env.GOOGLE_API_KEY ?? "",
     storeDisplayName: process.env.STORE_DISPLAY_NAME ?? "default",
+    model: process.env.GEMINI_MODEL ?? "gemini-2.5-pro",
   },
 };
 

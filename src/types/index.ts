@@ -19,6 +19,7 @@ export type ServerConfig = {
   gemini: {
     apiKey: string;
     storeDisplayName: string;
+    model: string;
   };
 }
 

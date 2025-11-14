@@ -102,8 +102,9 @@ The codebase implements a **Template Method Pattern** for tool development:
 
 1. **ensure_store**: Find existing FileSearchStore by display name or create new one
 2. **list_stores**: List all available FileSearchStores with pagination
-3. **upload_file**: Upload documents to knowledge base (auto-detects MIME type)
-4. **query_store**: Query knowledge base using RAG with Gemini models
+3. **upload_file**: Upload file documents to knowledge base (auto-detects MIME type)
+4. **upload_content**: Upload text content directly to knowledge base (text/plain, UTF-8)
+5. **query_store**: Query knowledge base using RAG with Gemini models
 
 ### Key Files
 
@@ -112,7 +113,7 @@ The codebase implements a **Template Method Pattern** for tool development:
 - `src/server/tool-registry.ts`: Tool registration and management
 - `src/clients/gemini-client.ts`: Gemini API client for RAG operations
 - `src/tools/base/base-tool.ts`: Base class for all tools
-- `src/tools/implementations/`: RAG tool implementations (ensure-store, list-stores, upload-file, query-store)
+- `src/tools/implementations/`: RAG tool implementations (ensure-store, list-stores, upload-file, upload-content, query-store)
 - `src/types/index.ts`: Shared type definitions
 - `src/config/index.ts`: Configuration management with Gemini config validation
 - `src/utils/logger.ts`: Winston-based logging
@@ -156,7 +157,18 @@ export class YourTool extends BaseTool<YourToolArgs> {
    - Add to `Tool` type union: `type Tool = EnsureStoreTool | ... | YourTool;`
    - Add to tools array: `new YourTool(context),`
 
-**Important**: Access `geminiClient` and `storeDisplayName` via `this.context` in tools.
+**Important**: Access `geminiClient`, `storeDisplayName`, and `defaultModel` via `this.context` in tools.
+
+### Upload Architecture
+
+The codebase implements shared upload logic to avoid code duplication:
+
+1. **GeminiClient.uploadBlob()** (private): Common logic for uploading Blob to Gemini API
+   - Handles file upload operation and polling
+   - Used by both uploadFile and uploadContent methods
+
+2. **GeminiClient.uploadFile()**: Reads file from path → Blob → uploadBlob
+3. **GeminiClient.uploadContent()**: Encodes text (UTF-8) → Blob → uploadBlob
 
 ### Transport Modes
 
@@ -186,6 +198,7 @@ Required for Gemini RAG functionality:
 - `STORE_DISPLAY_NAME`: Display name for vector store/knowledge base
 
 Optional:
+- `GEMINI_MODEL`: Gemini model to use for queries (default: gemini-2.5-pro)
 - `LOG_LEVEL`: error|warn|info|debug (default: info)
 - `DEBUG`: Enable debug console output (default: false)
 - `PORT`: HTTP server port (default: 3000)

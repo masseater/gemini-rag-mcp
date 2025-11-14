@@ -2,7 +2,20 @@
     "mcpServers": {
         "gemini-rag-mcp": {
             "type": "http",
-            "url": "http://localhost:${PORT:-3000}/mcp"
+            "url": "http://localhost:3120/mcp"
+        },
+        "serena": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": [
+                "--from",
+                "git+https://github.com/oraios/serena",
+                "serena",
+                "start-mcp-server",
+                "--context",
+                "ide-assistant"
+            ],
+            "env": {}
         }
     }
 }

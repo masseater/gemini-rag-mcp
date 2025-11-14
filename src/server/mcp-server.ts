@@ -39,6 +39,7 @@ export class MCPServerImpl {
     const toolContext: ToolContext = {
       geminiClient,
       storeDisplayName: config.gemini.storeDisplayName,
+      defaultModel: config.gemini.model,
     };
 
     // Setup tool registry and handlers

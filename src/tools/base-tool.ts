@@ -21,6 +21,7 @@ export type ToolDefinition<TArgs = Record<string, unknown>> = {
 export type ToolContext = {
   geminiClient: GeminiClient;
   storeDisplayName: string;
+  defaultModel: string;
 }
 
 export type ToolResponse = {

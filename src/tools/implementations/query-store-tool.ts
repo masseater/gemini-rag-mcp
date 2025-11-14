@@ -8,7 +8,6 @@ import type { MCPToolResponse } from "../../types/index.js";
 
 type QueryStoreArgs = {
   query: string;
-  model?: string;
 };
 
 type QueryStoreResult = {
@@ -30,27 +29,20 @@ export class QueryStoreTool extends BaseTool<QueryStoreArgs> {
         .string()
         .min(1)
         .describe("The question or query to search for in the knowledge base"),
-      model: z
-        .string()
-        .optional()
-        .describe(
-          "Gemini model to use (default: gemini-2.5-pro). Options: gemini-2.5-pro, gemini-1.5-flash",
-        ),
     });
   }
 
   async execute(args: QueryStoreArgs): Promise<MCPToolResponse<QueryStoreResult>> {
-    const { geminiClient, storeDisplayName } = this.context;
+    const { geminiClient, storeDisplayName, defaultModel } = this.context;
 
     // Ensure store exists
     const store = await geminiClient.ensureStore(storeDisplayName);
 
-    // Query the store
-    const model = args.model ?? "gemini-2.5-pro";
+    // Query the store using the default model from environment variable
     const result = await geminiClient.queryStore({
       storeName: store.name,
       query: args.query,
-      model,
+      model: defaultModel,
     });
 
     return {
@@ -60,7 +52,7 @@ export class QueryStoreTool extends BaseTool<QueryStoreArgs> {
         text: result.text,
         citations: result.citations,
         query: args.query,
-        model,
+        model: defaultModel,
         storeName: store.name,
       },
     };
