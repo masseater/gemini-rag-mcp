@@ -46,11 +46,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/mcp-server-template.git"
+    "url": "https://github.com/masseater/gemini-rag-mcp.git"
   },
-  "homepage": "https://github.com/yourusername/mcp-server-template#readme",
+  "homepage": "https://github.com/masseater/gemini-rag-mcp#readme",
   "bugs": {
-    "url": "https://github.com/yourusername/mcp-server-template/issues"
+    "url": "https://github.com/masseater/gemini-rag-mcp/issues"
   },
   "dependencies": {
     "@google/genai": "1.29.1",
