@@ -6,12 +6,14 @@ import type { ToolContext } from "../tools/base-tool.js";
 import { EnsureStoreTool } from "../tools/implementations/ensure-store-tool.js";
 import { ListStoresTool } from "../tools/implementations/list-stores-tool.js";
 import { UploadFileTool } from "../tools/implementations/upload-file-tool.js";
+import { UploadContentTool } from "../tools/implementations/upload-content-tool.js";
 import { QueryStoreTool } from "../tools/implementations/query-store-tool.js";
 
 type Tool =
   | EnsureStoreTool
   | ListStoresTool
   | UploadFileTool
+  | UploadContentTool
   | QueryStoreTool;
 
 export class ToolRegistry {
@@ -29,6 +31,7 @@ export class ToolRegistry {
       new EnsureStoreTool(context),
       new ListStoresTool(context),
       new UploadFileTool(context),
+      new UploadContentTool(context),
       new QueryStoreTool(context),
     ];
 

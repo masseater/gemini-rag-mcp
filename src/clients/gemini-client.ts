@@ -163,25 +163,19 @@ export class GeminiClient {
   }
 
   /**
-   * Upload a file to a FileSearchStore
+   * Upload a Blob to a FileSearchStore (common logic for file and content uploads)
    */
-  async uploadFile(args: {
+  private async uploadBlob(args: {
     storeName: string;
-    filePath: string;
+    blob: Blob;
     mimeType: string;
     displayName: string;
   }): Promise<UploadFileResult> {
-    // Read file and convert to Blob to handle multibyte characters in path
-    const fileBuffer = await readFile(args.filePath);
-    const blob = new Blob([new Uint8Array(fileBuffer)], {
-      type: args.mimeType,
-    });
-
-    logger.info(`Uploading file: ${args.displayName} (${args.mimeType})`);
+    logger.info(`Uploading: ${args.displayName} (${args.mimeType})`);
 
     const op = await this.ai.fileSearchStores.uploadToFileSearchStore({
       fileSearchStoreName: args.storeName,
-      file: blob,
+      file: args.blob,
       config: {
         mimeType: args.mimeType,
         displayName: args.displayName,
@@ -197,6 +191,49 @@ export class GeminiClient {
     logger.info(`Upload complete: ${documentName}`);
 
     return { documentName };
+  }
+
+  /**
+   * Upload a file to a FileSearchStore
+   */
+  async uploadFile(args: {
+    storeName: string;
+    filePath: string;
+    mimeType: string;
+    displayName: string;
+  }): Promise<UploadFileResult> {
+    // Read file and convert to Blob to handle multibyte characters in path
+    const fileBuffer = await readFile(args.filePath);
+    const blob = new Blob([new Uint8Array(fileBuffer)], {
+      type: args.mimeType,
+    });
+
+    return await this.uploadBlob({
+      storeName: args.storeName,
+      blob,
+      mimeType: args.mimeType,
+      displayName: args.displayName,
+    });
+  }
+
+  /**
+   * Upload text content to a FileSearchStore
+   */
+  async uploadContent(args: {
+    storeName: string;
+    content: string;
+    displayName: string;
+  }): Promise<UploadFileResult> {
+    const encoder = new TextEncoder();
+    const contentBytes = encoder.encode(args.content);
+    const blob = new Blob([contentBytes], { type: "text/plain" });
+
+    return await this.uploadBlob({
+      storeName: args.storeName,
+      blob,
+      mimeType: "text/plain",
+      displayName: args.displayName,
+    });
   }
 
   /**
