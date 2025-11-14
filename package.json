@@ -65,7 +65,6 @@
   "devDependencies": {
     "@types/express": "5.0.3",
     "@types/node": "^24.9.1",
-    "@vitest/coverage-v8": "^4.0.2",
     "eslint": "9.38.0",
     "eslint-config-flat-gitignore": "2.1.0",
     "knip": "5.66.3",

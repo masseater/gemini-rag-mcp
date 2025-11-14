@@ -3,16 +3,12 @@
  */
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { ToolContext } from "../tools/base-tool.js";
-import { EchoTool } from "../tools/implementations/echo-tool.js";
-import { PingTool } from "../tools/implementations/ping-tool.js";
 import { EnsureStoreTool } from "../tools/implementations/ensure-store-tool.js";
 import { ListStoresTool } from "../tools/implementations/list-stores-tool.js";
 import { UploadFileTool } from "../tools/implementations/upload-file-tool.js";
 import { QueryStoreTool } from "../tools/implementations/query-store-tool.js";
 
 type Tool =
-  | EchoTool
-  | PingTool
   | EnsureStoreTool
   | ListStoresTool
   | UploadFileTool
@@ -30,8 +26,6 @@ export class ToolRegistry {
   initialize(context: ToolContext): void {
     // Manual tool registration for safety and explicit review
     const tools: Tool[] = [
-      new EchoTool(context),
-      new PingTool(context),
       new EnsureStoreTool(context),
       new ListStoresTool(context),
       new UploadFileTool(context),
