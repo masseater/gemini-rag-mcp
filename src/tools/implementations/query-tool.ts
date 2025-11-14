@@ -6,11 +6,11 @@ import { z } from "zod";
 import { BaseTool } from "../base/base-tool.js";
 import type { MCPToolResponse } from "../../types/index.js";
 
-type QueryStoreArgs = {
+type QueryArgs = {
   query: string;
 };
 
-type QueryStoreResult = {
+type QueryResult = {
   text: string;
   citations: string[];
   query: string;
@@ -18,8 +18,8 @@ type QueryStoreResult = {
   storeName: string;
 };
 
-export class QueryStoreTool extends BaseTool<QueryStoreArgs> {
-  readonly name = "query_store";
+export class QueryTool extends BaseTool<QueryArgs> {
+  readonly name = "query";
   readonly description =
     "Query the FileSearchStore using RAG (Retrieval-Augmented Generation) to get answers based on uploaded documents. The AI will search through the documents and provide relevant answers with citations.";
 
@@ -32,7 +32,7 @@ export class QueryStoreTool extends BaseTool<QueryStoreArgs> {
     });
   }
 
-  async execute(args: QueryStoreArgs): Promise<MCPToolResponse<QueryStoreResult>> {
+  async execute(args: QueryArgs): Promise<MCPToolResponse<QueryResult>> {
     const { geminiClient, storeDisplayName, defaultModel } = this.context;
 
     // Ensure store exists

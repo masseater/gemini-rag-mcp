@@ -5,12 +5,12 @@ import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { ToolContext } from "../tools/base-tool.js";
 import { UploadFileTool } from "../tools/implementations/upload-file-tool.js";
 import { UploadContentTool } from "../tools/implementations/upload-content-tool.js";
-import { QueryStoreTool } from "../tools/implementations/query-store-tool.js";
+import { QueryTool } from "../tools/implementations/query-tool.js";
 
 type Tool =
   | UploadFileTool
   | UploadContentTool
-  | QueryStoreTool;
+  | QueryTool;
 
 export class ToolRegistry {
   private registeredTools: string[] = [];
@@ -26,7 +26,7 @@ export class ToolRegistry {
     const tools: Tool[] = [
       new UploadFileTool(context),
       new UploadContentTool(context),
-      new QueryStoreTool(context),
+      new QueryTool(context),
     ];
 
     for (const tool of tools) {

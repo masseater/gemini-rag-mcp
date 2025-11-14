@@ -96,7 +96,7 @@ Once configured with Claude Desktop, the following tools are available:
 
 - **upload_file**: Upload document files to the knowledge base
 - **upload_content**: Upload text content directly to the knowledge base
-- **query_store**: Query the knowledge base using RAG
+- **query**: Query the knowledge base using RAG
 
 ## Resources
 
