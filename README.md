@@ -1,32 +1,60 @@
-# MCP Server Template
+# Gemini RAG MCP Server
 
-A production-ready template for building Model Context Protocol (MCP) servers with TypeScript. This template provides a solid foundation with support for both stdio and HTTP transports, extensible tool architecture, and best practices.
+A Model Context Protocol (MCP) server that provides RAG (Retrieval-Augmented Generation) capabilities using Google's Gemini API File Search feature. This server enables AI applications to create knowledge bases and retrieve information from uploaded documents.
 
 ## Features
 
-- ✅ **Dual Transport Support**: stdio (default) and HTTP transports
+- ✅ **File Search RAG**: Create and manage knowledge bases using Gemini's File Search API
+- ✅ **Document Upload**: Upload documents to create searchable knowledge bases
+- ✅ **Information Retrieval**: Query knowledge bases to retrieve relevant information
+- ✅ **MCP Protocol**: Full compatibility with Model Context Protocol
 - ✅ **Type-Safe**: Full TypeScript support with strict mode enabled
-- ✅ **Extensible Architecture**: Base classes for easy tool creation
+- ✅ **Dual Transport Support**: stdio (default) and HTTP transports
 - ✅ **Production-Ready**: Logging, error handling, and configuration management
-- ✅ **CI/CD**: GitHub Actions for automated testing and npm publishing
-- ✅ **Automated Dependency Updates**: Dependabot configuration with auto-merge
-- ✅ **Developer-Friendly**: Hot reload, ESLint, and comprehensive tooling
-- ✅ **Sample Tools**: Echo and Ping tools as examples
 
 ## Prerequisites
 
 - Node.js >= 22.10.0
 - pnpm >= 10.19.0
+- Google API Key with Gemini API access
 
-## Quick Start
+## Installation
 
-### 1. Use this template
+### Using with Claude Desktop (Recommended)
 
-Click "Use this template" on GitHub or clone this repository:
+Add the following to your Claude Desktop configuration file:
+
+**macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+**Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+```json
+{
+  "mcpServers": {
+    "gemini-rag-mcp": {
+      "command": "npx",
+      "args": ["-y", "@r_masseater/gemini-rag-mcp"],
+      "env": {
+        "GOOGLE_API_KEY": "your_google_api_key_here",
+        "STORE_DISPLAY_NAME": "your_store_name"
+      }
+    }
+  }
+}
+```
+
+**Required Environment Variables:**
+- `GOOGLE_API_KEY`: Your Google API key with Gemini API access
+- `STORE_DISPLAY_NAME`: Display name for your vector store/knowledge base
+
+After configuration, restart Claude Desktop to load the server.
+
+## Development
+
+### 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/mcp-server-template.git
-cd mcp-server-template
+git clone https://github.com/masseater/gemini-rag-mcp.git
+cd gemini-rag-mcp
 ```
 
 ### 2. Install dependencies
@@ -43,22 +71,6 @@ pnpm run dev
 
 # HTTP transport (with hot reload)
 pnpm run dev:http
-```
-
-### 4. Build for production
-
-```bash
-pnpm run build
-```
-
-### 5. Run in production
-
-```bash
-# stdio transport
-pnpm run start:stdio
-
-# HTTP transport
-pnpm run start:http
 ```
 
 ## Project Structure
